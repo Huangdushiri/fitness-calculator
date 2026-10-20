@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# PyInstaller 构建产物
+build/
+dist/
+*.spec
+
+# 本地数据（食物库与饮食记录，含用户数据，不提交）
+foods.db
+
+# 其他
+设计.txt
+Thumbs.db
+.DS_Store

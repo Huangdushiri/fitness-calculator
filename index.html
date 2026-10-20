@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0D9488">
+  <meta name="description" content="健身数据计算器：基础代谢、饮食热量、食物库、饮食结构与饮食记录">
+  <title>健身数据计算器</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <h1>健身数据计算器</h1>
+      <p class="header-sub">基础代谢 · 饮食热量 · 食物库 · 饮食结构 · 饮食记录</p>
+    </div>
+  </header>
+
+  <main id="content">
+
+    <!-- 基础代谢 -->
+    <section id="screen-bmr" class="screen active">
+      <div class="page-title">
+        <h2>基础代谢计算</h2>
+        <p class="sub">输入身体数据，计算静息状态下维持生命所需的每日热量</p>
+      </div>
+      <div class="card">
+        <div class="segmented" id="gender-seg">
+          <button class="seg active" data-gender="男">男</button>
+          <button class="seg" data-gender="女">女</button>
+        </div>
+        <label class="field"><span>年龄（岁）</span><input id="bmr-age" type="number" inputmode="numeric" placeholder="例如 25"></label>
+        <label class="field"><span>身高（cm）</span><input id="bmr-height" type="number" inputmode="numeric" placeholder="例如 175"></label>
+        <label class="field"><span>体重（kg）</span><input id="bmr-weight" type="number" inputmode="decimal" placeholder="例如 70"></label>
+        <button class="btn-primary" id="bmr-calc">计算基础代谢</button>
+      </div>
+      <div class="result" id="bmr-result"></div>
+    </section>
+
+    <!-- 饮食热量 -->
+    <section id="screen-calorie" class="screen">
+      <div class="page-title">
+        <h2>饮食热量计算</h2>
+        <p class="sub">加入多种食物，自动汇总总热量与三大营养素</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">添加食物</h3>
+        <div class="row">
+          <select id="food-select" class="select"></select>
+          <input id="food-weight" type="number" inputmode="decimal" placeholder="重量(g)" class="input">
+        </div>
+        <div id="food-info" class="hint"></div>
+        <button class="btn-primary" id="add-item">＋ 加入清单</button>
+      </div>
+      <div class="card">
+        <h3 class="card-title">本次清单</h3>
+        <ul id="item-list" class="item-list"></ul>
+        <div id="item-total" class="total"></div>
+        <button class="btn-ghost" id="clear-items">清空清单</button>
+      </div>
+      <div class="card">
+        <h3 class="card-title">确认记录</h3>
+        <label class="field"><span>餐次</span>
+          <select id="meal-period" class="select">
+            <option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐</option>
+          </select>
+        </label>
+        <button class="btn-primary" id="save-record">确认记录</button>
+      </div>
+    </section>
+
+    <!-- 食物管理 -->
+    <section id="screen-manage" class="screen">
+      <div class="page-title">
+        <h2>食物管理</h2>
+        <p class="sub">录入、修改或删除食物库数据（每 100g 含量）</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">编辑食物</h3>
+        <label class="field"><span>食物名称</span><input id="m-name" type="text" placeholder="例如 鸡胸肉"></label>
+        <label class="field"><span>碳水(g/100g)</span><input id="m-carbs" type="number" inputmode="decimal" placeholder="0"></label>
+        <label class="field"><span>蛋白质(g/100g)</span><input id="m-protein" type="number" inputmode="decimal" placeholder="20"></label>
+        <label class="field"><span>脂肪(g/100g)</span><input id="m-fat" type="number" inputmode="decimal" placeholder="5"></label>
+        <div class="row">
+          <button class="btn-primary" id="m-save">保存</button>
+          <button class="btn-ghost" id="m-delete">删除所选</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">当前食物库（点击载入编辑）</h3>
+        <ul id="food-library" class="food-list"></ul>
+      </div>
+    </section>
+
+    <!-- 饮食结构 -->
+    <section id="screen-diet" class="screen">
+      <div class="page-title">
+        <h2>饮食结构计算</h2>
+        <p class="sub">碳水渐降与碳循环两种方案，帮你规划每日营养素</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">① 碳水渐降（热量占比 0.5 : 0.3 : 0.2）</h3>
+        <label class="field"><span>每日总热量(kcal)</span><input id="d-total" type="number" inputmode="numeric" placeholder="例如 2000"></label>
+        <button class="btn-primary" id="d-532">计算碳水渐降</button>
+        <div class="result" id="d-532-result"></div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">② 碳循环（倍数为每日平均摄入）</h3>
+        <label class="field"><span>体重(kg)</span><input id="d-weight" type="number" inputmode="decimal" placeholder="70"></label>
+        <label class="field"><span>碳水(g/kg)</span><input id="d-carbs" type="number" inputmode="decimal" value="3"></label>
+        <label class="field"><span>蛋白质(g/kg)</span><input id="d-protein" type="number" inputmode="decimal" value="2"></label>
+        <label class="field"><span>脂肪(g/kg)</span><input id="d-fat" type="number" inputmode="decimal" value="0.8"></label>
+        <button class="btn-primary" id="d-cycle">计算碳循环</button>
+        <div class="result" id="d-cycle-result"></div>
+      </div>
+    </section>
+
+    <!-- 饮食记录 -->
+    <section id="screen-record" class="screen">
+      <div class="page-title">
+        <h2>饮食记录</h2>
+        <p class="sub">选择日期查看当天所有记录与总摄入量</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">记录日期</h3>
+        <ul id="date-list" class="date-list"></ul>
+      </div>
+      <div class="card">
+        <h3 class="card-title" id="record-title">饮食记录</h3>
+        <ul id="record-list" class="record-list"></ul>
+        <div id="record-summary" class="total"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-screen="bmr"><span class="ico">🔥</span><span>基础代谢</span></button>
+    <button class="tab" data-screen="calorie"><span class="ico">🍚</span><span>饮食热量</span></button>
+    <button class="tab" data-screen="manage"><span class="ico">🥗</span><span>食物管理</span></button>
+    <button class="tab" data-screen="diet"><span class="ico">📊</span><span>饮食结构</span></button>
+    <button class="tab" data-screen="record"><span class="ico">📅</span><span>饮食记录</span></button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>

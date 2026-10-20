@@ -1,0 +1,16 @@
+{
+  "name": "健身数据计算器",
+  "short_name": "健身计算",
+  "description": "基础代谢、饮食热量、食物库、饮食结构与饮食记录",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F1F5F9",
+  "theme_color": "#0D9488",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
