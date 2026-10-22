@@ -77,32 +77,25 @@ function split532(total) {
   return { carbs: total * 0.5 / 4, protein: total * 0.3 / 4, fat: total * 0.2 / 9 };
 }
 
-const CARB_RATIOS = { "高碳日": 50 / 35, "中碳日": 1.0, "低碳日": 15 / 35 };
-const FAT_RATIOS = { "高碳日": 15 / 35, "中碳日": 1.0, "低碳日": 50 / 35 };
 const CYCLE_COUNTS = { "高碳日": 2, "中碳日": 3, "低碳日": 2 };
 const CYCLE_ORDER = ["高碳日", "中碳日", "低碳日"];
-
-function weekNorm(ratios) {
-  let total = 0;
-  for (const d of CYCLE_ORDER) total += CYCLE_COUNTS[d] * ratios[d];
-  return 7 / total;
-}
+const CARB_SHARES = { "高碳日": 0.5, "中碳日": 0.35, "低碳日": 0.15 };
+const FAT_SHARES = { "高碳日": 0.15, "中碳日": 0.35, "低碳日": 0.5 };
 
 function carbCycling(weight, carbsKg, proteinKg, fatKg) {
   const protein = proteinKg * weight;
-  const carbsMid = carbsKg * weight * weekNorm(CARB_RATIOS);
-  const fatMid = fatKg * weight * weekNorm(FAT_RATIOS);
   const daily = {};
   const weekly = { total_kcal: 0, carbs: 0, protein: 0, fat: 0 };
   for (const name of CYCLE_ORDER) {
-    const carbs = carbsMid * CARB_RATIOS[name];
-    const fat = fatMid * FAT_RATIOS[name];
+    const count = CYCLE_COUNTS[name];
+    const carbs = carbsKg * weight * 7 * CARB_SHARES[name] / count;
+    const fat = fatKg * weight * 7 * FAT_SHARES[name] / count;
     const total_kcal = 4 * carbs + 4 * protein + 9 * fat;
     daily[name] = { total_kcal, carbs, protein, fat };
-    weekly.total_kcal += total_kcal * CYCLE_COUNTS[name];
-    weekly.carbs += carbs * CYCLE_COUNTS[name];
-    weekly.protein += protein * CYCLE_COUNTS[name];
-    weekly.fat += fat * CYCLE_COUNTS[name];
+    weekly.total_kcal += total_kcal * count;
+    weekly.carbs += carbs * count;
+    weekly.protein += protein * count;
+    weekly.fat += fat * count;
   }
   return { daily, weekly };
 }

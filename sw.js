@@ -1,5 +1,5 @@
 /* 健身数据计算器 —— Service Worker（PWA 离线缓存） */
-const CACHE = "fitness-calc-v1";
+const CACHE = "fitness-calc-v2";
 const ASSETS = [
   "./",
   "./index.html",

@@ -40,44 +40,35 @@ def split_532(total_kcal):
     return carbs, protein, fat
 
 
-# 碳循环：碳水/脂肪在高/中/低碳日之间的相对比例（以中碳日为 1）
-CARB_RATIOS = {"高碳日": 50 / 35, "中碳日": 1.0, "低碳日": 15 / 35}
-FAT_RATIOS = {"高碳日": 15 / 35, "中碳日": 1.0, "低碳日": 50 / 35}
-
 # 每周各类日的天数：2 高碳日、3 中碳日、2 低碳日
 CARB_CYCLE_COUNTS = {"高碳日": 2, "中碳日": 3, "低碳日": 2}
 
-
-def _week_norm(ratios):
-    """归一化系数：使一周（7 天）各类日加权总量 = 7 × 每日基准值。
-
-    输入的倍数代表「每日平均摄入」，因此一周总量应精确等于 7 × 倍数 × 体重。
-    """
-    total_units = sum(CARB_CYCLE_COUNTS[d] * ratios[d] for d in CARB_CYCLE_COUNTS)
-    return 7 / total_units
+# 碳水/脂肪每周总量在各天之间的占比
+CARB_SHARES = {"高碳日": 0.5, "中碳日": 0.35, "低碳日": 0.15}
+FAT_SHARES = {"高碳日": 0.15, "中碳日": 0.35, "低碳日": 0.5}
 
 
 def carb_cycling(weight_kg, carbs_g_per_kg, protein_g_per_kg, fat_g_per_kg):
     """碳循环饮食计划。
 
     输入碳水 / 蛋白质 / 脂肪的体重倍数（g/kg），它们代表「每日平均摄入」：
-        每日平均 = 倍数 × 体重
-    每周 2 高碳日 + 3 中碳日 + 2 低碳日，碳水与脂肪按固定比例分配到各天，
-    使一周总量精确等于 7 × 倍数 × 体重；蛋白质三种日恒定。
+    每周 2 高碳日 + 3 中碳日 + 2 低碳日。每周碳水/脂肪总量 = 7 × 倍数 × 体重，
+    再按占比分配到各类日：每日 = 体重 × 倍数 × 7 × 占比 / 该类日天数。
 
     碳水  高碳日 : 中碳日 : 低碳日 = 50% : 35% : 15%
     脂肪  高碳日 : 中碳日 : 低碳日 = 15% : 35% : 50%
 
+    蛋白质三种日恒定（= 倍数 × 体重）。
+
     返回 (daily, weekly)，其中 daily 为各类日的字典，weekly 为每周合计。
     """
     protein = protein_g_per_kg * weight_kg
-    carbs_mid = carbs_g_per_kg * weight_kg * _week_norm(CARB_RATIOS)
-    fat_mid = fat_g_per_kg * weight_kg * _week_norm(FAT_RATIOS)
 
     daily = {}
     for name in CARB_CYCLE_COUNTS:
-        carbs = carbs_mid * CARB_RATIOS[name]
-        fat = fat_mid * FAT_RATIOS[name]
+        count = CARB_CYCLE_COUNTS[name]
+        carbs = carbs_g_per_kg * weight_kg * 7 * CARB_SHARES[name] / count
+        fat = fat_g_per_kg * weight_kg * 7 * FAT_SHARES[name] / count
         total_kcal = 4 * carbs + 4 * protein + 9 * fat
         daily[name] = {
             "total_kcal": total_kcal,
